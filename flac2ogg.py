@@ -97,14 +97,17 @@ def write_ogg_metadata(filename, comments):
     file_obj = tagpy.FileRef(filename)
     tag_obj = file_obj.tag()
 
-    tag_obj.artist = comments['artist'].decode(DEFAULT_ENCODING)
-    tag_obj.album  = comments['album'].decode(DEFAULT_ENCODING)
-    tag_obj.title  = comments['title'].decode(DEFAULT_ENCODING)
-    tag_obj.year   = int(comments['date'].decode(DEFAULT_ENCODING))
-    tag_obj.track  = int(comments['trkno'].decode(DEFAULT_ENCODING))
-    tag_obj.genre  = comments['genre'].decode(DEFAULT_ENCODING)
+    if tag_obj is not None:
+        tag_obj.artist = comments['artist'].decode(DEFAULT_ENCODING)
+        tag_obj.album  = comments['album'].decode(DEFAULT_ENCODING)
+        tag_obj.title  = comments['title'].decode(DEFAULT_ENCODING)
+        tag_obj.year   = int(comments['date'].decode(DEFAULT_ENCODING))
+        tag_obj.track  = int(comments['trkno'].decode(DEFAULT_ENCODING))
+        tag_obj.genre  = comments['genre'].decode(DEFAULT_ENCODING)
+    else:
+        print 'original file missing tag object'
 
-    file_obj.save()
+        file_obj.save()
 # end write_ogg_metadata
 
 def get_options():
@@ -133,6 +136,8 @@ def main():
     options = get_options()
     bitrate = options.bitrate
     source_dir = re.sub('\/+$', '', options.flac_dir)
+    # glob treats [ and ] differently, so we convert it to [[] and []]
+    source_dir = re.sub(r'([\[\]])', r'[\1]', options.flac_dir)
 
     # Process files in directory specified via -d option (not recursive).
     flac_meta = {}
