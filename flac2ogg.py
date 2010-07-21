@@ -97,17 +97,17 @@ def write_ogg_metadata(filename, comments):
     file_obj = tagpy.FileRef(filename)
     tag_obj = file_obj.tag()
 
-    if tag_obj is not None:
-        tag_obj.artist = comments['artist'].decode(DEFAULT_ENCODING)
-        tag_obj.album  = comments['album'].decode(DEFAULT_ENCODING)
-        tag_obj.title  = comments['title'].decode(DEFAULT_ENCODING)
-        tag_obj.year   = int(comments['date'].decode(DEFAULT_ENCODING))
-        tag_obj.track  = int(comments['trkno'].decode(DEFAULT_ENCODING))
-        tag_obj.genre  = comments['genre'].decode(DEFAULT_ENCODING)
-    else:
+    if tag_obj is None:
         print 'original file missing tag object'
+        return
+    tag_obj.artist = comments['artist'].decode(DEFAULT_ENCODING)
+    tag_obj.album  = comments['album'].decode(DEFAULT_ENCODING)
+    tag_obj.title  = comments['title'].decode(DEFAULT_ENCODING)
+    tag_obj.year   = int(comments['date'].decode(DEFAULT_ENCODING))
+    tag_obj.track  = int(comments['trkno'].decode(DEFAULT_ENCODING))
+    tag_obj.genre  = comments['genre'].decode(DEFAULT_ENCODING)
+    file_obj.save()
 
-        file_obj.save()
 # end write_ogg_metadata
 
 def get_options():
